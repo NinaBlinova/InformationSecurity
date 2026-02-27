@@ -3,6 +3,24 @@ from pprint import pprint
 from typing import Optional
 
 from FirstLR.polybean.polybean_algorithm.utils import *
+from FirstLR.polybean.polybean_algorithm.utils.frequency_analysis_new import FrequencyAnalysisNew
+
+
+def key_accuracy(original_key_matrix, hacked_key) -> float:
+    total = 0
+    matches = 0
+    for i in range(min(len(original_key_matrix), len(hacked_key))):
+        for j in range(min(len(original_key_matrix[i]), len(hacked_key[i]))):
+            if original_key_matrix[i][j] != '*':
+                total += 1
+                if original_key_matrix[i][j] == hacked_key[i][j]:
+                    matches += 1
+    print(matches)
+    print(total)
+    if total == 0:
+        return 0.0
+
+    return matches / total * 100
 
 
 class Command(Enum):
@@ -88,6 +106,11 @@ class Main:
             frequency_analysis = FrequencyAnalysis(message)
             frequency_analysis.print_table()
             frequency_analysis.print_possible_text()
+            key = frequency_analysis.get_restored_key()
+            print(key)
+            original_key = self.polybean_cipher._key_matrix
+            accuracy = key_accuracy(original_key, key)
+            print(f"\nKey совпадение: {accuracy:.2f}%")
         except Exception:
             print('Invalid message')
 
@@ -119,6 +142,9 @@ if __name__ == '__main__':
 theforestawakenswiththefirstraysofsunlightfilteringthroughthecanopyabovetheairisfilledwiththefreshscentofpineandearthafteranovernightrainbirdsbeginchirpinggreetingthedaywiththeirsongsasasoftbreezerustlestheleavescreatingagentlemelodythatechosthroughthetreesabeautifuldeerstepslightlyoverthemosscoveredgrounditsgracefulmovementsbarelydisturbingthesilencebelowabrookflowsoverpolishedstonesitscrystalclearwatersparklinginthemorninglightthisisasacredplacefulloflifewheretimemovesmoreslowlyandthehustleoftheoutsideworldseemsadistantmemoryeverybreathfeelslikeameditationandthesoulfindsapeaceimpossibletoachieveelsewhereherenatureremindsusofitstimelessbeautyandpower
 mtnymgzymuntmgatmtzgnfzgzumgauatnfaymtnymtnymgzyayntatmtntzgmfatmuzyatzfaupuaypynymtzyaypumtmgntayaupymtnyntmuzfpynymtnymgngzgaumuztmfzgpgmupfmgmtnymgzgayntayatzyaypupumgagnfaymtnymtnymgzyntmgatnyatngmgaumtmuzyztayaumgzgauagmgzgntmtnyzgzymtmgntzgaumupfmgntauaypynymtntzgayaupgayntagatpgmgpyayaungnyayntztayaupypyntmgmgmtayaupymtnymgagzgmfnfaymtnymtnymgayntatmuaupyatzgatzgatmuzymtpgntmgmgzqmgntzfatmtpumgatmtnymgpumgzgpfmgatngntmgzgmtayaupyzgpymgaumtpumgnumgpumuagmfmtnyzgmtmgngnymuatmtnyntmuzfpynymtnymgmtntmgmgatzgpgmgzgzfmtayzyzfpuagmgmgntatmtmgztatpuaypynymtpumfmupfmgntmtnymgnumuatatngmupfmgntmgagpyntmuzfauagaymtatpyntzgngmgzyzfpunumupfmgnumgaumtatpgzgntmgpumfagayatmtzfntpgayaupymtnymgataypumgaungmgpgmgpumunfzgpgntmumuzuzypumunfatmupfmgntztmupuayatnymgagatmtmuaumgataymtatngntmfatmtzgpungpumgzgntnfzgmtmgntatztzgntzupuayaupyayaumtnymgnumuntauayaupypuaypynymtmtnyayatayatzgatzgngntmgagztpuzgngmgzyzfpupumuzypuayzymgnfnymgntmgmtaynumgnumupfmgatnumuntmgatpumunfpumfzgauagmtnymgnyzfatmtpumgmuzymtnymgmuzfmtatayagmgnfmuntpuagatmgmgnuatzgagayatmtzgaumtnumgnumuntmfmgpfmgntmfpgntmgzgmtnyzymgmgpuatpuayzumgzgnumgagaymtzgmtaymuauzgauagmtnymgatmuzfpuzyayauagatzgztmgzgngmgaynuztmuatataypgpumgmtmuzgngnyaymgpfmgmgpuatmgnfnymgntmgnymgntmgauzgmtzfntmgntmgnuayauagatzfatmuzyaymtatmtaynumgpumgatatpgmgzgzfmtmfzgauagztmunfmgnt
 добавить в отчет как кол-во текста влияет на качество частотного анализа
+
+inanefforttoencourageecologicallysustainableforestrypracticesaninternationalorganizationstartedissuingcertificationstowoodcompaniesthatmeethighecologicalstandardsbyconservingresourcesandrecyclingmaterialscompaniesthatreceivethiscertificationcanattractcustomersbyadvertisingtheirproductsasecocertifiedaroundtheworldmanywoodcompanieshaveadoptednewecologicallyfriendlypracticesinordertoreceiveecocertificationhoweveritisunlikelythatwoodcompaniesintheunitedstateswilldothesameforseveralreasonsfirstamericanconsumersareexposedtosomuchadvertisingthattheywouldnotvalueorevenpayattentiontotheecocertificationlabelbecausesomanymediocreproductsarelabeledneworimprovedamericanconsumersdonotplacemuchtrustinadvertisingclaimsingeneralsecondecocertifiedwoodwillbemoreexpensivethanuncertifiedwoodbecauseinordertoearnecocertificationawoodcompanymustpaytohaveitsbusinessexaminedbyacertificationagencythisadditionalcostgetspassedontoconsumersamericanconsumerstendtobestronglymotivatedbypriceandthereforetheyarelikelytochoosecheaperuncertifiedwoodproductsaccordinglyamericanwoodcompanieswillprefertokeeptheirpriceslowratherthanobtainecocertificationthirdalthoughsomepeopleclaimthatitalwaysmakesgoodbusinesssenseforamericancompaniestokeepupwiththedevelopmentsintherestoftheworldthisargumentisnotconvincingpursuingcertificationwouldmakesenseforamericanwoodcompaniesonlyiftheymarketedmostoftheirproductsabroadbutthatisnotthecaseamericanwoodbusinessessellmostoftheirproductsintheunitedstatescateringtoaverylargecustomerbasethatissatisfiedwiththemerchandise
+
 * z p n a m
 g a b c d e
 y f g h i j

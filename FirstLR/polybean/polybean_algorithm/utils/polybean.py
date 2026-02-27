@@ -32,9 +32,10 @@ def print_key_matrix(key_matrix: KEY_TYPE):
 
 
 class PolybeanCipher:
-    __slots__ = ('_key_encryption', '_key_decryption')
+    __slots__ = ('_key_encryption', '_key_decryption', '_key_matrix')
 
     def __init__(self, key_matrix: KEY_TYPE) -> None:
+        self._key_matrix = key_matrix
         """
         Пример key_matrix:
         [

@@ -32,6 +32,16 @@ class FrequencyAnalysis:
                          for first_letter, second_letter in zip(text[::2], text[1::2])]
         counts_symbol = {}
 
+        first_letters = text[::2]
+        second_letters = text[1::2]
+
+        self.first_freq = self._count(first_letters)
+        self.second_freq = self._count(second_letters)
+        self.full_freq = self._count(text)
+
+        self.sorted_columns = sorted(self.first_freq, key=self.first_freq.get, reverse=True)
+        self.sorted_rows = sorted(self.second_freq, key=self.second_freq.get, reverse=True)
+
         for symbol in self._symbols:
             counts_symbol.setdefault(symbol, 0)
             counts_symbol[symbol] += 1
@@ -54,7 +64,34 @@ class FrequencyAnalysis:
         text = ''.join(self._possible_key[symbol] for symbol in self._symbols)
         print(text)
 
+    def get_restored_key(self):
+        print("\nRestored key (by frequency):\n")
+        col_count = len(self.sorted_columns)
+        row_count = len(self.sorted_rows)
+        alphabet_iter = iter(ENGLISH_FREQUENCY)
+        key_matrix = []
+        key_matrix.append(["*"] + self.sorted_columns)
+        for row_symbol in self.sorted_rows:
+            row = [row_symbol]
+            for _ in range(col_count):
+                try:
+                    row.append(next(alphabet_iter))
+                except StopIteration:
+                    row.append("*")
+            key_matrix.append(row)
+        return key_matrix
+
     @staticmethod
     def find_nearest_letter(frequency: float) -> str:
-        letter = min({letter: abs(frequency - rate) for letter, rate in ENGLISH_FREQUENCY.items()}.items(), key=lambda x: x[1])[0]
+        letter = \
+        min({letter: abs(frequency - rate) for letter, rate in ENGLISH_FREQUENCY.items()}.items(), key=lambda x: x[1])[
+            0]
         return letter
+
+    @staticmethod
+    def _count(sequence):
+        counts = {}
+        for s in sequence:
+            counts[s] = counts.get(s, 0) + 1
+        total = len(sequence)
+        return {k: v / total for k, v in counts.items()}

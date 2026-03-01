@@ -1,26 +1,8 @@
 from enum import Enum
 from pprint import pprint
 from typing import Optional
-
-from FirstLR.polybean.polybean_algorithm.utils import *
-from FirstLR.polybean.polybean_algorithm.utils.frequency_analysis_new import FrequencyAnalysisNew
-
-
-def key_accuracy(original_key_matrix, hacked_key) -> float:
-    total = 0
-    matches = 0
-    for i in range(min(len(original_key_matrix), len(hacked_key))):
-        for j in range(min(len(original_key_matrix[i]), len(hacked_key[i]))):
-            if original_key_matrix[i][j] != '*':
-                total += 1
-                if original_key_matrix[i][j] == hacked_key[i][j]:
-                    matches += 1
-    print(matches)
-    print(total)
-    if total == 0:
-        return 0.0
-
-    return matches / total * 100
+from FirstLR.polybean.polybean_algorithm.utils import PolybeanCipher, get_random_key, print_key_matrix, \
+    FrequencyAnalysis, create_key_matrix_from_text
 
 
 class Command(Enum):
@@ -59,30 +41,25 @@ class Main:
             print('3 - generate random key')
         print('6 - frequence analysis')
 
+
     def delete_key(self):
         self.polybean_cipher = None
 
+
     def input_key(self):
-        print("Enter key (finish with empty line):")
-        lines = []
-        while True:
-            line = input()
-            if not line:
-                break
-            lines.append(line)
-
-        key_input = "\n".join(lines)
-
+        key_input = input('Enter key: ')
         try:
             key = create_key_matrix_from_text(key_input)
             self.polybean_cipher = PolybeanCipher(key)
         except Exception:
             print('Invalid key')
 
+
     def generate_key(self):
         key = get_random_key()
         print_key_matrix(key)
         self.polybean_cipher = PolybeanCipher(key)
+
 
     def encrypt(self):
         message = input('Enter message: ')
@@ -92,6 +69,7 @@ class Main:
         except Exception:
             print('Invalid message')
 
+
     def decrypt(self):
         message = input('Enter message: ')
         try:
@@ -100,17 +78,16 @@ class Main:
         except Exception:
             print('Invalid message')
 
+
     def frequence_analysis(self):
         message = input('Enter message: ')
         try:
             frequency_analysis = FrequencyAnalysis(message)
             frequency_analysis.print_table()
             frequency_analysis.print_possible_text()
-            key = frequency_analysis.get_restored_key()
-            print(key)
-            original_key = self.polybean_cipher._key_matrix
-            accuracy = key_accuracy(original_key, key)
-            print(f"\nKey совпадение: {accuracy:.2f}%")
+            print(f'Len the message: {len(message)}')
+
+            frequency_analysis.print_similarity(self.polybean_cipher.key_decryption)
         except Exception:
             print('Invalid message')
 
@@ -133,7 +110,6 @@ class Main:
             self.draw_menu()
             self.command = Command(input('Enter command: '))
 
-
 if __name__ == '__main__':
     main = Main()
     main.run()
@@ -141,9 +117,6 @@ if __name__ == '__main__':
 """
 theforestawakenswiththefirstraysofsunlightfilteringthroughthecanopyabovetheairisfilledwiththefreshscentofpineandearthafteranovernightrainbirdsbeginchirpinggreetingthedaywiththeirsongsasasoftbreezerustlestheleavescreatingagentlemelodythatechosthroughthetreesabeautifuldeerstepslightlyoverthemosscoveredgrounditsgracefulmovementsbarelydisturbingthesilencebelowabrookflowsoverpolishedstonesitscrystalclearwatersparklinginthemorninglightthisisasacredplacefulloflifewheretimemovesmoreslowlyandthehustleoftheoutsideworldseemsadistantmemoryeverybreathfeelslikeameditationandthesoulfindsapeaceimpossibletoachieveelsewhereherenatureremindsusofitstimelessbeautyandpower
 mtnymgzymuntmgatmtzgnfzgzumgauatnfaymtnymtnymgzyayntatmtntzgmfatmuzyatzfaupuaypynymtzyaypumtmgntayaupymtnyntmuzfpynymtnymgngzgaumuztmfzgpgmupfmgmtnymgzgayntayatzyaypupumgagnfaymtnymtnymgzyntmgatnyatngmgaumtmuzyztayaumgzgauagmgzgntmtnyzgzymtmgntzgaumupfmgntauaypynymtntzgayaupgayntagatpgmgpyayaungnyayntztayaupypyntmgmgmtayaupymtnymgagzgmfnfaymtnymtnymgayntatmuaupyatzgatzgatmuzymtpgntmgmgzqmgntzfatmtpumgatmtnymgpumgzgpfmgatngntmgzgmtayaupyzgpymgaumtpumgnumgpumuagmfmtnyzgmtmgngnymuatmtnyntmuzfpynymtnymgmtntmgmgatzgpgmgzgzfmtayzyzfpuagmgmgntatmtmgztatpuaypynymtpumfmupfmgntmtnymgnumuatatngmupfmgntmgagpyntmuzfauagaymtatpyntzgngmgzyzfpunumupfmgnumgaumtatpgzgntmgpumfagayatmtzfntpgayaupymtnymgataypumgaungmgpgmgpumunfzgpgntmumuzuzypumunfatmupfmgntztmupuayatnymgagatmtmuaumgataymtatngntmfatmtzgpungpumgzgntnfzgmtmgntatztzgntzupuayaupyayaumtnymgnumuntauayaupypuaypynymtmtnyayatayatzgatzgngntmgagztpuzgngmgzyzfpupumuzypuayzymgnfnymgntmgmtaynumgnumupfmgatnumuntmgatpumunfpumfzgauagmtnymgnyzfatmtpumgmuzymtnymgmuzfmtatayagmgnfmuntpuagatmgmgnuatzgagayatmtzgaumtnumgnumuntmfmgpfmgntmfpgntmgzgmtnyzymgmgpuatpuayzumgzgnumgagaymtzgmtaymuauzgauagmtnymgatmuzfpuzyayauagatzgztmgzgngmgaynuztmuatataypgpumgmtmuzgngnyaymgpfmgmgpuatmgnfnymgntmgnymgntmgauzgmtzfntmgntmgnuayauagatzfatmuzyaymtatmtaynumgpumgatatpgmgzgzfmtmfzgauagztmunfmgnt
-добавить в отчет как кол-во текста влияет на качество частотного анализа
-
-inanefforttoencourageecologicallysustainableforestrypracticesaninternationalorganizationstartedissuingcertificationstowoodcompaniesthatmeethighecologicalstandardsbyconservingresourcesandrecyclingmaterialscompaniesthatreceivethiscertificationcanattractcustomersbyadvertisingtheirproductsasecocertifiedaroundtheworldmanywoodcompanieshaveadoptednewecologicallyfriendlypracticesinordertoreceiveecocertificationhoweveritisunlikelythatwoodcompaniesintheunitedstateswilldothesameforseveralreasonsfirstamericanconsumersareexposedtosomuchadvertisingthattheywouldnotvalueorevenpayattentiontotheecocertificationlabelbecausesomanymediocreproductsarelabeledneworimprovedamericanconsumersdonotplacemuchtrustinadvertisingclaimsingeneralsecondecocertifiedwoodwillbemoreexpensivethanuncertifiedwoodbecauseinordertoearnecocertificationawoodcompanymustpaytohaveitsbusinessexaminedbyacertificationagencythisadditionalcostgetspassedontoconsumersamericanconsumerstendtobestronglymotivatedbypriceandthereforetheyarelikelytochoosecheaperuncertifiedwoodproductsaccordinglyamericanwoodcompanieswillprefertokeeptheirpriceslowratherthanobtainecocertificationthirdalthoughsomepeopleclaimthatitalwaysmakesgoodbusinesssenseforamericancompaniestokeepupwiththedevelopmentsintherestoftheworldthisargumentisnotconvincingpursuingcertificationwouldmakesenseforamericanwoodcompaniesonlyiftheymarketedmostoftheirproductsabroadbutthatisnotthecaseamericanwoodbusinessessellmostoftheirproductsintheunitedstatescateringtoaverylargecustomerbasethatissatisfiedwiththemerchandise
 
 * z p n a m
 g a b c d e
@@ -152,4 +125,7 @@ u k l m n o
 t p q r s t
 f u v w x y
 q z * * * *
+
+
+thequickbrownfoxjumpsoverthelazydogthisisastandardpangramhoweverweneedmoresymbolstotestthefrequencyanalysisletusimaginethatwearewritingalongparagraphaboutnaturallanguageprocessingitisafascinatingfieldthatcombinesthlinguisticsandcomputerscienceoneofthemainchallengesinnlpisdealingwithambiguityandcontextwordslikerunhavemultiplemeaningsdependingonhowtheyareusedinasentencemachinelearningmodelsrequirelargeamountsofdatatoperformwellthisdataisoftenreferredtoascorpusinthecontextoflinguisticsforexamplewemightanalyzetextfromwikipediaornewspaperarticlestounderstandhowwordsareusedinreallifesituationsstopwordslikeandtheandareoftenremovedduringpreprocessingbecausetheydonotcarrysignificantmeaningstemmingandlemmatizationaretechniquestoreducewordstotheirbaseformforinstancerunningandranbothderiverunfromtheperspectiveofanalgorithmthisprocessimprovestheabilityofmodelstogeneralizepatternsacrossdifferenttextshoweveritisimportanttobecarefulwithoverstemmingwhichcanleadtoerroneousresultsaswecontinuetoexplorethisdomainwecometounderstandtheimportanceofwordembeddingslikewordvecorglovetheseembeddingsrepresentwordsasdensevectorsinacontinuousspacesemanticallysimilarwordsarepositionedclosetoeachotherinthatspaceforexamplekingandqueenwouldhavevectorsthatarecloserelativetoeachothercomparedtounrelatedwordssuchasastronomythisfieldisrapidlyevolvingwiththeintroductionofneuralnetworkarchitecturesliketransformerswhichunderpinmodelslikebertandgptthesemodelscanhandlecontextmoreeffectivelybyconsideringtheentiresequenceofwordsatonceviaselfattentionmechanismstheyhaveachievedstateoftheartresultsonnumeroustasksincludingquestionansweringmachinetranslationandsentimentanalysishowevertheysufferfromcertaindrawbackssuchasbeingcomputationallyexpensiverequiringmassiveamountsoftrainingdataandsometimesexhibitingbiasespresentintheirtrainingcorpusethicsinaiisacriticaltopicespeciallyasweseealgorithmicdecisionmakingbecomingmoreprevalentindailylifesuchasincourtsorjobapplicationsensuringfairnessandtransparencyismajorongoingchallengewithnoonesizefitsallsolutionthetoolswedevelopareonlyasgoodasthedataweprovideandthequestionsweaskthisiterativeprocessofresearchandapplicationcontinuestopushboundariesmakingitpossibleforcomputerstounderstandandgeneratenaturallanguagewithremarkablefluencythoughwestillhavealongwaytogoinachievingtruenaturalunderstandingcomparabletohumancognitionthejourneyfromsimplefrequencycountstocomplexdeeplearningmodelshasbeenremarkableeachapproachhasitsstrengthsandweaknessesfortestslikeyoursimplefrequencyanalysisisgreatforunderstandingbasicpatternsinthelanguageandcanrevealalotaboutthestructureofthetextitcanevenbeusedformorsecodeorothersimpleciphersinsomecontextslookingforwardthefuturemightincludemodelsthatnotonlyunderstandtextbutalsotheworldbehinditrequiringintegrationwithotherdomainsofknowledgesuchasvisionandroboticsfornowthoughyourfocusonfrequencyanalysisisafundamentalbuildingblockthatshouldnotbeunderestimatedpracticingsuchclassictechniquesprovidesasolidfoundationfordelvingintomoreadvancedtopicswhenyouarereadythemoreyouworkwithrawtextthemoreyouappreciatethenuanceandcomplexityhiddenwithinthelanguagethatweoftenuseautomaticallyeverydayjustthinkaboutthelastbookyoureadorthelastconversationyouhadyourbrainwasdoingincrediblycomplexanalysisinstantlyyettothinkofitintermsofsimplefrequenciesaswellitisahumblingreminderofhowmuchyetsimulateandunderstandthisconcludesthesampletextdesignedtoreachthetargetofexactlyonethousandwordstoprovideyouwithasufficientdatasetforthetestingofyourfrequencyanalysistoolsandtechniquesrememberthatthesetoolsareonlyasmartastheircreatorsandthequalityoftheinputdatasohandlethemwithcareandcuriosity
 """

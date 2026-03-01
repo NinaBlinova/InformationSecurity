@@ -79,6 +79,10 @@ class PolybeanCipher:
         pairs = map(lambda pair: pair[0] + pair[1], zip(text[::2], text[1::2]))
         return ''.join(map(self._key_decryption.__getitem__, pairs))
 
+    @property
+    def key_decryption(self) -> Dict[str, str]:
+        return self._key_decryption
+
 
 """
 Aa	8,17 %

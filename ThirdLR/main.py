@@ -2,7 +2,7 @@ import random
 from enum import Enum
 from typing import Optional
 
-from RSA.util import RSA
+from ThirdLR.util import RSA
 
 
 class Command(Enum):

@@ -1,6 +1,6 @@
 import unittest as ut
 
-from RSA.util.rca import RSA
+from ThirdLR.util import RSA
 
 
 class RsaTest(ut.TestCase):
